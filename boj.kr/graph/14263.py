@@ -1,31 +1,66 @@
-# 실제 카드의 크기와
-# 현재 카드가 노출되는 수를 비교해서 손상된 카드인지 확인
-# 손상되지 않았다면 루트 노드
-# 루트노드부터 손상시킨 카드가 선행 노드
-# 그래프로 정리하고 위상 정렬 및 같은 레벨의 노드는 사전 오름차순 정렬
-# 1. 실제 카드의 크기와 현재 카드가 노출되는 수 저장
-# (1) NM만큼 돌면서 카드를 찾고 -> NM
-#   (2) 해당 카드의 실제 크기와 노출되는 수를 비교 -> NM
-#    NM^2 -> 62,500
-# 2. 그래프로 정리
-import sys
+# 각 카드의 크기를 구하고,
+# 해당 카드 안에 다른 카드가 있을 때 그래프에 추가
+from heapq import heappush, heappop
 
+answer = ""
 n, m = map(int, input().split())
 grid = [input() for _ in range(n)]
-sizes = []
-exposures = []
-
-
-def get_size(x, y, target):
-    return
-
-
-def get_exposure(x, y, target):
-    return
-
+cards_count = 0
+graph = {}
+ind = {}
 
 for i in range(n):
     for j in range(m):
         if grid[i][j] != ".":
-            sizes.append(get_size(i, j, grid[i][j]))
-            exposures.append(get_exposure(i, j, grid[i][j]))
+            if grid[i][j] not in graph:
+                graph[grid[i][j]] = []
+                cards_count += 1
+
+for card in graph.keys():
+    ind[card] = 0
+
+for card in graph.keys():
+    minx = n - 1
+    maxx = 0
+    miny = m - 1
+    maxy = 0
+
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == card:
+                minx = min(minx, i)
+                maxx = max(maxx, i)
+                miny = min(miny, j)
+                maxy = max(maxy, j)
+
+    for i in range(minx, maxx + 1):
+        for j in range(miny, maxy + 1):
+            if grid[i][j] == ".":
+                print(-1)
+                exit()
+
+            if grid[i][j] != card and grid[i][j] not in graph[card]:
+                graph[card].append(grid[i][j])
+                ind[grid[i][j]] += 1
+
+queue = []
+
+for key, value in ind.items():
+    if value == 0:
+        heappush(queue, key)
+
+while queue:
+    cur_card = heappop(queue)
+
+    answer += cur_card
+
+    for next_card in graph[cur_card]:
+        ind[next_card] -= 1
+
+        if ind[next_card] == 0:
+            heappush(queue, next_card)
+
+if cards_count != len(answer):
+    print(-1)
+else:
+    print(answer)
