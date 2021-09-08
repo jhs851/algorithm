@@ -1,50 +1,20 @@
+# 1. 점화식 정의 -> n번째에서 만들 수 있는 가장 긴 바이토닉 부분 수열의 길이
+# 2. 작은문제
+#   -> i번째까지 가장 긴 증가하는 부분 수열과 a를 반대로 했을 때 가장 긴 증가하는 부분 수열을 저장
+# 3. 점화식
+#   -> d[i][0] = a[i] > a[j] ? max(d[i][0], d[j][0] + 1)
+#   -> d[i][1] = a[n - i] > a[n - j] ? max(d[n - i - 1][1], d[n - j - 1][1] + 1)
+# 4. 시간복잡도 O(N^2)
+# 5. 코드
 n = int(input())
-s = list(map(int, input().split()))
-dp = [0 for _ in range(n)]
-dp2 = [0 for _ in range(n)]
+a = list(map(int, input().split()))
+d = [[1] * 2 for _ in range(n)]
 
 for i in range(n):
     for j in range(i):
-        if (s[i] > s[j] and dp[i] < dp[j]):
-            dp[i] = dp[j]
+        if a[i] > a[j]:
+            d[i][0] = max(d[i][0], d[j][0] + 1)
+        if a[n - i - 1] > a[n - j - 1]:
+            d[n - i - 1][1] = max(d[n - i - 1][1], d[n - j - 1][1] + 1)
 
-    dp[i] += 1
-
-for i in range(n - 1, -1, -1):
-    for j in range(n - 1, i, -1):
-        if (s[i] > s[j] and dp2[i] < dp2[j]):
-            dp2[i] = dp2[j]
-
-    dp2[i] += 1
-    dp[i] += dp2[i] - 1
-
-print(max(dp))
-
-# 10
-# 1 5 2 1 4 3 4 5 2 1 = 7
-
-# dp[0] = 1
-# dp[1] = 2
-# dp[2] = 2
-# dp[3] = 1
-# dp[4] = 3
-# dp[5] = 3
-# dp[6] = 4
-# dp[7] = 5
-# dp[8] = 2
-# dp[9] = 1
-
-# dp[9] = 1
-# dp[8] = 2
-# dp[7] = 3
-# dp[6] = 3
-# dp[5] = 3
-# dp[4] = 4
-# dp[3] = 1
-# dp[2] = 2
-# dp[1] = 5
-# dp[0] = 1
-
-# s[i]가 s[이전 j들]의 값보다 클 때 -> dp[i] = s[i]가 s[이전 j들]의 값보다 크면서 가장 큰 dp[이전 j들]
-# dp에는 +1씩
-# 반대로 한번더, +1 안함
+print(max(map(sum, d)) - 1)

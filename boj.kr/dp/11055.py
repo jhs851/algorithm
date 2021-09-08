@@ -1,27 +1,16 @@
+# 1. 점화식 정의 -> n번째까지의 증가 부분 수열 중 가장 합이 가장 큰 것
+# 2. 작은 문제
+#   -> d[i]와 d[i-1까지의] + a[i] 증가 부분 수열 합을 비교
+# 3. 점화식 -> d[i] = a[i] > a[j] ? max(d[i], d[j] + a[i]) 0 <= j < i
+# 4. 시간복잡도 O(N^2)
+# 5. 코드
 n = int(input())
-s = list(map(int, input().split()))
-dp = [x for x in s]
+a = list(map(int, input().split()))
+d = a[::]
 
-for i in range(n):
+for i in range(1, n):
     for j in range(i):
-        if (s[i] > s[j] and dp[i] < s[i] + dp[j]):
-            dp[i] = s[i] + dp[j]
+        if a[i] > a[j] and d[i] < d[j] + a[i]:
+            d[i] = d[j] + a[i]
 
-print(max(dp))
-
-# 10
-# 1 100 2 50 60 3 5 6 7 8 = 113
-# dp[0] = 1
-# dp[1] = 101
-# dp[2] = 3
-# dp[3] = 53
-# dp[4] = 113
-# dp[5] = 6
-# dp[6] = 11
-# dp[7] = 17
-# dp[8] = 24
-# dp[9] = 32
-# s[i] > s[j] -> dp[i] = s[i] + dp[j]
-
-# 10
-# 1 100 2 101 60 3 5 6 7 8 = 202
+print(d)
